@@ -36,12 +36,23 @@ function show_locked_users() {
         echo "No locked users found."
     fi
 }
+function show_user_devices() {
+    read -p "Enter username: " username
+    check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
+    if [[ $check_user_exist == $username ]]; then
+        echo "Devices connected by $username:"
+        who | grep $username
+    else
+        echo "$username not found. Please try again."
+    fi
+}
 
 echo -e "\033[1;33mSelect an option:\033[0m"
 echo -e "\033[1;32m [1] \033[1;31m• \033[1;33mLock User\033[0m"
 echo -e "\033[1;32m [2] \033[1;31m• \033[1;33mUnlock User\033[0m"
 echo -e "\033[1;32m [3] \033[1;31m• \033[1;33mShow locked users\033[0m"
-echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mExit\033[0m"
+echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mShow user devices\033[0m"
+echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mExit\033[0m"
 echo ""
 read -p "Enter option number: " option
 
@@ -49,6 +60,7 @@ case $option in
     1) lock_user;;
     2) unlock_user;;
     3) show_locked_users;;
-    4) exit;;
+    4) show_user_devices;;
+    5) exit;;
     *) echo "Invalid option. Please try again.";;
 esac
