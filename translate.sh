@@ -78,11 +78,14 @@ sleep 0.3
 echo -ne '[######################  ]\r'
 wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/remover -P /tmp/SSH-PLUS-ENG/
 sleep 0.3
-echo -ne '[####################### ]\r'
+echo -ne '[######################## ]\r'
+wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/bot -P /tmp/SSH-PLUS-ENG/
+sleep 0.3
+echo -ne '[######################### ]\r'
 wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/senharoot -P /tmp/SSH-PLUS-ENG/
 wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/sshmonitor -P /tmp/SSH-PLUS-ENG/
 wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/userbackup -P /tmp/SSH-PLUS-ENG/
-echo -ne '[########################]\r'
+echo -ne '[##########################]\r'
 echo ""
 echo ""
 echo ""
