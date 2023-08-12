@@ -86,7 +86,7 @@ echo "====================" >> \$TRAFFIC_FILE
 EOF
 
     # Add script execution to crontab
-    (crontab -l ; echo "0 0 * * * bash /root/AETeam/Trafic-server.sh") | crontab -
+    (crontab -l ; echo "0 0 * * * bash /root/AETEAM/Trafic-server.sh") | crontab -
     echo "Traffic script installed and configured."
 }
 
