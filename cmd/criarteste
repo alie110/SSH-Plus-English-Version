@@ -6,15 +6,36 @@ echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
 function lock_user() {
-    # ... کدهای قبلی برای lock_user ...
+    read -p "Enter username: " username
+    check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
+    if [[ $check_user_exist == $username ]]; then
+        chage -E 0 $username
+        echo "$username locked successfully!"
+        echo "$username" >> /root/AETteam/Lock-User.txt
+    else
+        echo "$username not found. Please try again."
+    fi
 }
 
 function unlock_user() {
-    # ... کدهای قبلی برای unlock_user ...
+    read -p "Enter username: " username
+    check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
+    if [[ $check_user_exist == $username ]]; then
+        chage -E -1 $username
+        echo "$username unlocked successfully!"
+        sed -i "/$username/d" /root/AETteam/Lock-User.txt
+    else
+        echo "$username not found. Please try again."
+    fi
 }
 
 function show_locked_users() {
-    # ... کدهای قبلی برای show_locked_users ...
+    if [ -f "/root/AETteam/Lock-User.txt" ]; then
+        echo "Locked users:"
+        cat /root/AETteam/Lock-User.txt
+    else
+        echo "No locked users found."
+    fi
 }
 
 function install_traffic_script() {
@@ -24,7 +45,7 @@ function install_traffic_script() {
         apt-get install vnstat -y
     fi
 
-    # کد Trafic-server.sh را ایجاد کنید
+    # Create and configure the traffic script
     cat > /root/AETeam/Trafic-server.sh << EOF
 #!/bin/bash
 VNSTAT_PATH=/usr/bin/vnstat
@@ -41,7 +62,7 @@ echo "DATE: \$TODAY" >> \$TRAFFIC_FILE
 echo "====================" >> \$TRAFFIC_FILE
 EOF
 
-    # اضافه کردن اجرای اسکریپت به crontab
+    # Add script execution to crontab
     (crontab -l ; echo "0 0 * * * bash /root/AETeam/Trafic-server.sh") | crontab -
     echo "Traffic script installed and configured."
 }
