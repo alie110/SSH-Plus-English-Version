@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Check if the directory exists, create it if not
-AETEAM_DIR="/root/AETeam"
+AETEAM_DIR="/root/AETEAM"
 if [ ! -d "$AETEAM_DIR" ]; then
-    echo "Creating AETeam directory..."
+    echo "Creating AETEAM directory..."
     mkdir -p "$AETEAM_DIR"
     echo "Directory created."
 
@@ -23,7 +23,7 @@ function lock_user() {
     if [[ $check_user_exist == $username ]]; then
         chage -E 0 $username
         echo "$username locked successfully!"
-        echo "$username" >> /root/AETteam/Lock-User.txt
+        echo "$username" >> "$AETEAM_DIR/Lock-User.txt"
     else
         echo "$username not found. Please try again."
     fi
@@ -35,16 +35,27 @@ function unlock_user() {
     if [[ $check_user_exist == $username ]]; then
         chage -E -1 $username
         echo "$username unlocked successfully!"
-        sed -i "/$username/d" /root/AETteam/Lock-User.txt
+        sed -i "/$username/d" /root/AETEAM/Lock-User.txt
     else
         echo "$username not found. Please try again."
     fi
 }
 
+function unlock_user() {
+    read -p "Enter username: " username
+    check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
+    if [[ $check_user_exist == $username ]]; then
+        chage -E -1 $username
+        echo "$username unlocked successfully!"
+        sed -i "/$username/d" "$AETEAM_DIR/Lock-User.txt"
+    else
+        echo "$username not found. Please try again."
+    fi
+}
 function show_locked_users() {
-    if [ -f "/root/AETteam/Lock-User.txt" ]; then
+    if [ -f "$AETEAM_DIR/Lock-User.txt" ]; then
         echo "Locked users:"
-        cat /root/AETteam/Lock-User.txt
+        cat "$AETEAM_DIR/Lock-User.txt"
     else
         echo "No locked users found."
     fi
