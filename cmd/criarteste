@@ -91,7 +91,7 @@ EOF
 }
 
 function show_traffic_for_date() {
-    read -p "Enter date (YYYY-MM-DD): " selected_date
+    read -p "Enter date (DD/MM/YYYY): " selected_date
     if grep -q "DATE: $selected_date" /root/AETEAM/Traffic.txt; then
         echo "Traffic for $selected_date:"
         grep -A 3 "DATE: $selected_date" /root/AETEAM/Traffic.txt
