@@ -73,7 +73,7 @@ function install_traffic_script() {
 #!/bin/bash
 VNSTAT_PATH=/usr/bin/vnstat
 INTERFACE=eth0
-TODAY=\$(date +"%Y-%m-%d")
+TODAY=\$(date +"%d/%m/%Y")
 TRAFFIC_FILE=/root/AETeam/Traffic.txt
 VNSTAT_RESULT=\$(\$VNSTAT_PATH --json -i \$INTERFACE -m)
 DOWNLOAD=\$(echo \$VNSTAT_RESULT | jq '.interfaces[].traffic.months[] | select(.date == "'\$TODAY'").rx / 1024 / 1024 / 1024')
