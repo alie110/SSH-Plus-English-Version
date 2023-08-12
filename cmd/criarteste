@@ -1,5 +1,11 @@
 #!/bin/bash
-
+# Check if the directory exists, create it if not
+AETEAM_DIR="/root/AETeam"
+if [ ! -d "$AETEAM_DIR" ]; then
+    echo "Creating AETeam directory..."
+    mkdir -p "$AETEAM_DIR"
+    echo "Directory created."
+fi
 echo ""
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
