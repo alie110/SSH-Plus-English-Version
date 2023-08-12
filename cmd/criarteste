@@ -69,7 +69,7 @@ function install_traffic_script() {
     fi
 
     # Create and configure the traffic script
-    cat > /root/AETeam/Trafic-server.sh << EOF
+    cat > /root/AETEAM/Trafic-server.sh << EOF
 #!/bin/bash
 VNSTAT_PATH=/usr/bin/vnstat
 INTERFACE=eth0
@@ -92,9 +92,9 @@ EOF
 
 function show_traffic_for_date() {
     read -p "Enter date (YYYY-MM-DD): " selected_date
-    if grep -q "DATE: $selected_date" /root/AETeam/Traffic.txt; then
+    if grep -q "DATE: $selected_date" /root/AETEAM/Traffic.txt; then
         echo "Traffic for $selected_date:"
-        grep -A 3 "DATE: $selected_date" /root/AETeam/Traffic.txt
+        grep -A 3 "DATE: $selected_date" /root/AETEAM/Traffic.txt
     else
         echo "No traffic data found for $selected_date."
     fi
