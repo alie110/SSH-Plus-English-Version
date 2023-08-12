@@ -1,10 +1,16 @@
 #!/bin/bash
+
 # Check if the directory exists, create it if not
 AETEAM_DIR="/root/AETeam"
 if [ ! -d "$AETEAM_DIR" ]; then
     echo "Creating AETeam directory..."
     mkdir -p "$AETEAM_DIR"
     echo "Directory created."
+
+    # Create Lock-User.txt and Traffic.txt files
+    touch "$AETEAM_DIR/Lock-User.txt"
+    touch "$AETEAM_DIR/Traffic.txt"
+    echo "Lock-User.txt and Traffic.txt created."
 fi
 echo ""
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
