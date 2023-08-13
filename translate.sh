@@ -1,10 +1,4 @@
 #!/bin/bash
-if ! command -v vnstat &> /dev/null; then
-    echo "vnstat is not installed. Installing vnstat..."
-    apt-get update
-    apt-get install vnstat -y
-    echo "vnstat installed successfully!"
-fi
 clear
 echo ""
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
@@ -100,6 +94,13 @@ for filename in /tmp/SSH-PLUS-ENG/*; do
 done
 
 rm /tmp/SSH-PLUS-ENG/*
+echo ""
+if ! command -v vnstat &> /dev/null; then
+    echo "vnstat is not installed. Installing vnstat..."
+    apt-get update
+    apt-get install vnstat -y
+    echo "vnstat installed successfully!"
+fi
 echo ""
 echo "Translation COMPLETE"
 sleep 1
