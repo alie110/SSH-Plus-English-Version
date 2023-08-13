@@ -128,10 +128,10 @@ function show_full_traffic_data() {
 RECEIVED=$(ifconfig eth0 | grep 'RX bytes' | awk '{print $2}' | cut -d ':' -f 2)
 TRANSMITTED=$(ifconfig eth0 | grep 'TX bytes' | awk '{print $6}' | cut -d ':' -f 2)
 
-# Convert bytes to gigabytes using printf
-RECEIVED_GB=$(printf "%.2f" "$(echo "$RECEIVED / (1024 * 1024 * 1024)" | bc -l)")
-TRANSMITTED_GB=$(printf "%.2f" "$(echo "$TRANSMITTED / (1024 * 1024 * 1024)" | bc -l)")
-TOTAL_GB=$(printf "%.2f" "$(echo "$RECEIVED_GB + $TRANSMITTED_GB" | bc -l)")
+# Convert bytes to gigabytes using awk
+RECEIVED_GB=$(echo "$RECEIVED" | awk '{ printf "%.2f", $1 / (1024 * 1024 * 1024) }')
+TRANSMITTED_GB=$(echo "$TRANSMITTED" | awk '{ printf "%.2f", $1 / (1024 * 1024 * 1024) }')
+TOTAL_GB=$(echo "$RECEIVED_GB + $TRANSMITTED_GB" | bc -l))
 
 # ... کدهای قبلی ...
 
