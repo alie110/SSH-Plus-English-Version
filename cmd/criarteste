@@ -12,7 +12,11 @@ if [ ! -d "$AETEAM_DIR" ]; then
     touch "$AETEAM_DIR/Traffic.txt"
     echo "Lock-User.txt and Traffic.txt created."
 fi
-
+if ! command -v iftop &> /dev/null; then
+    echo "Installing iftop..."
+    apt-get update
+    apt-get install iftop -y
+fi
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
@@ -125,9 +129,11 @@ function show_full_traffic_data() {
     fi
 }
 #################نمایش ترافیک لحظه ای
-RECEIVED=$(nload -u GB -t 1000 -U -s eth0 | awk '/Received/ {print $2}')
-TRANSMITTED=$(nload -u GB -t 1000 -U -s eth0 | awk '/Transmitted/ {print $2}')
-TOTAL_GB=$(awk "BEGIN { printf \"%.2f\", $RECEIVED + $TRANSMITTED }")
+RECEIVED=$(iftop -t -s 1 -n -N | awk '/Total send rate/ {print $4}')
+TRANSMITTED=$(iftop -t -s 1 -n -N | awk '/Total receive rate/ {print $4}')
+# Calculate total traffic
+TOTAL_GB=$(echo "$RECEIVED + $TRANSMITTED" | bc)
+
 
 # ... کدهای قبلی ...
 
