@@ -125,13 +125,9 @@ function show_full_traffic_data() {
     fi
 }
 #################نمایش ترافیک لحظه ای
-RECEIVED=$(ifconfig eth0 | grep 'RX bytes' | awk '{print $2}' | cut -d ':' -f 2)
-TRANSMITTED=$(ifconfig eth0 | grep 'TX bytes' | awk '{print $6}' | cut -d ':' -f 2)
-
-# Convert bytes to gigabytes using awk
-RECEIVED_GB=$(echo "$RECEIVED" | awk '{ printf "%.2f", $1 / (1024 * 1024 * 1024) }')
-TRANSMITTED_GB=$(echo "$TRANSMITTED" | awk '{ printf "%.2f", $1 / (1024 * 1024 * 1024) }')
-TOTAL_GB=$(echo "$RECEIVED_GB + $TRANSMITTED_GB" | bc -l))
+RECEIVED=$(nload -u GB -t 1000 -U -s eth0 | awk '/Received/ {print $2}')
+TRANSMITTED=$(nload -u GB -t 1000 -U -s eth0 | awk '/Transmitted/ {print $2}')
+TOTAL_GB=$(awk "BEGIN { printf \"%.2f\", $RECEIVED + $TRANSMITTED }")
 
 # ... کدهای قبلی ...
 
@@ -153,8 +149,8 @@ echo -e "\033[1;32m [2] \033[1;31m• \033[1;33mUnlock User\033[0m"
 echo -e "\033[1;32m [3] \033[1;31m• \033[1;33mShow Locked Users\033[0m"
 echo -e "\033[0;31m===========   «\033[1;31mTRAFFIC  SERVER\033[0;31m»   ============\033[0m"
 echo -e "\033[0;31m==================================================================\033[0m"
-echo -e "\033[0;31mDOWNLOAD: $RECEIVED_GB GB \033[0m"
-echo -e "\033[0;31mUPLOAD: $TRANSMITTED_GB GB \033[0m"
+echo -e "\033[0;31mDOWNLOAD: $RECEIVED GB \033[0m"
+echo -e "\033[0;31mUPLOAD: $TRANSMITTED GB \033[0m"
 echo -e "\033[0;31mTOTAL: $TOTAL_GB GB \033[0m"
 echo -e "\033[0;31m==================================================================\033[0m"
 echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script $traffic_script_status\033[0m"
