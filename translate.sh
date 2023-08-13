@@ -5,16 +5,6 @@ echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━�
 echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
-if ! command -v vnstat &> /dev/null; then
-    echo "vnstat is not installed. Installing vnstat..."
-    apt-get update
-    apt-get install vnstat -y
-    echo "vnstat installed successfully!"
-fi
-
-# Rest of your existing code
-clear
-echo ""
 sleep 2
 echo "Initializing............."
 sleep 3
@@ -104,6 +94,13 @@ for filename in /tmp/SSH-PLUS-ENG/*; do
 done
 
 rm /tmp/SSH-PLUS-ENG/*
+echo ""
+if ! command -v vnstat &> /dev/null; then
+    echo "vnstat is not installed. Installing vnstat..."
+    apt-get update
+    apt-get install vnstat -y
+    echo "vnstat installed successfully!"
+fi
 
 echo "Translation COMPLETE"
 sleep 1
