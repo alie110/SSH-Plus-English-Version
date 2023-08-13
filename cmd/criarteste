@@ -124,13 +124,22 @@ function show_full_traffic_data() {
         echo "No traffic data found."
     fi
 }
+#################نمایش ترافیک لحظه ای
+
+# Calculate total received and transmitted bytes from ifconfig
 RECEIVED=$(ifconfig eth0 | grep 'RX bytes' | awk '{print $2}' | cut -d ':' -f 2)
 TRANSMITTED=$(ifconfig eth0 | grep 'TX bytes' | awk '{print $6}' | cut -d ':' -f 2)
 
 # Convert bytes to gigabytes
-RECEIVED_GB=$(echo "$RECEIVED / (1024 * 1024 * 1024)" | bc)
-TRANSMITTED_GB=$(echo "$TRANSMITTED / (1024 * 1024 * 1024)" | bc)
-TOTAL_GB=$(echo "$RECEIVED_GB + $TRANSMITTED_GB" | bc)
+RECEIVED_GB=$(echo "$RECEIVED / (1024 * 1024 * 1024)" | bc -l)
+TRANSMITTED_GB=$(echo "$TRANSMITTED / (1024 * 1024 * 1024)" | bc -l)
+TOTAL_GB=$(echo "$RECEIVED_GB + $TRANSMITTED_GB" | bc -l)
+
+echo "DOWNLOAD: $RECEIVED_GB GB"
+echo "UPLOAD: $TRANSMITTED_GB GB"
+echo "TOTAL: $TOTAL_GB GB"
+
+
 # ... کدهای قبلی ...
 
 # Check if the Traffic script is installed
