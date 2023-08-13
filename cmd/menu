@@ -145,21 +145,6 @@ function autoexec () {
    fi
 
 }
-########################################################################################################
-#!/bin/bash
-
-function print_formatted_output() {
-    local arrTODAY=("$@")  # یک تغییر کوچک در اینجا
-    echo -e "\033[1;32mDOWNLOAD:\033[1;37m ${arrTODAY[72]}     \033[1;31mUPLOAD: \033[1;37m${arrTODAY[75]} \033[1;33mTOTAL: \033[1;37m${arrTODAY[78]}\033[0m"
-}
-
-# Get the vnstat statistics for today
-TODAY_INFO=$(vnstat)
-arrTODAY=($TODAY_INFO)
-
-# Call the function to print the formatted output
-print_formatted_output "${arrTODAY[@]}"
-########################################################################################################
 #menu2
 menu2 (){
 [[ -e /etc/Plus-torrent ]] && stsf=$(echo -e "\033[1;32m◉ ") || stsf=$(echo -e "\033[1;31m○ ")
@@ -192,6 +177,12 @@ _onlin=$(printf '%-5s' "$_onli")
 _userexp=$(printf '%-5s' "$_expuser")
 _tuser=$(awk -F: '$3>=1000 {print $1}' /etc/passwd | grep -v nobody | wc -l)
 clear
+#####################
+TODAY_INFO=$(vnstat)
+arrTODAY=($TODAY_INFO)
+# Format the output for today's traffic
+TODAY_OUTPUT="{\"daily_usage\":{\"rx\": ${arrTODAY[72]}, \"tx\": ${arrTODAY[75]}, \"total\": ${arrTODAY[78]} }}"
+#####################
 echo -e "\033[1;42m                                                   \033[m"
 echo -e "\033[47m \E[30m                        ☫                         \033[0m"
 echo -e "\033[1;41m                                                   \033[m"
