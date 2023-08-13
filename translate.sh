@@ -87,13 +87,6 @@ wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/
 wget -q https://raw.githubusercontent.com/alie110/SSH-Plus-English-Version/main/cmd/userbackup -P /tmp/SSH-PLUS-ENG/
 echo -ne '[##########################]\r'
 echo ""
-if command -v vnstat &>/dev/null; then
-    echo "vnstat is already installed."
-else
-    echo "Installing vnstat..."
-    sudo apt-get update
-    sudo apt-get install vnstat -y
-fi
 echo ""
 echo ""
 for filename in /tmp/SSH-PLUS-ENG/*; do
