@@ -13,32 +13,6 @@ if [ ! -d "$AETEAM_DIR" ]; then
     echo "Lock-User.txt and Traffic.txt created."
 fi
 
-#!/bin/bash
-
-while true; do
-    # گرفتن اطلاعات از nload
-    nload_output=$(nload -u G -d G 1)
-
-    # تجزیه و تحلیل اطلاعات دریافتی
-    download=$(echo "$nload_output" | grep -oP "Received: \K[\d.]+")
-    upload=$(echo "$nload_output" | grep -oP "Transmitted: \K[\d.]+")
-    total=$(echo "$nload_output" | grep -oP "Total: \K[\d.]+")
-
-    # پاک کردن صفحه ترمینال
-    clear
-
-    # نمایش اطلاعات دریافتی
-    echo -e "\033[0;31m==================================================================\033[0m"
-    echo -e "\033[0;31mDOWNLOAD: \033[0m${download} GB"
-    echo -e "\033[0;31mUPLOAD: \033[0m${upload} GB"
-    echo -e "\033[0;31mTOTAL: \033[0m${total} GB"
-    echo -e "\033[0;31m==================================================================\033[0m"
-
-    # تاخیر برای به‌روزرسانی لحظه‌ای
-    sleep 1
-done
-
-
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
@@ -167,10 +141,11 @@ echo -e "\033[0;31m=============================================================
 echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script $traffic_script_status\033[0m"
 echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mShow Traffic for Date\033[0m"
 echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mShow Full Traffic\033[0m"
+echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mMomentary Traffic\033[0m"
 echo -e "\033[0;31m===========   «\033[1;31mSPEED UP SERVER\033[0;31m»   ============\033[0m"
 echo -e "\033[1;32m [X] \033[1;31m• \033[1;33mXXXXXXXXXX\033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mExit\033[0m"
+echo -e "\033[1;32m [8] \033[1;31m• \033[1;33mExit\033[0m"
 echo ""
 echo ""
 read -p "Enter option number: " option
@@ -182,6 +157,11 @@ case $option in
 4) install_traffic_script;;
 5) show_traffic_for_date;;
 6) show_full_traffic_data;;  # This is the new option
-7) exit;;
+7) clear 
+   echo -e "\033[1;32mPARA SAIR CLICK CTRL + C\033[1;36m"
+   sleep 4
+   nload
+   ;;
+8) exit;;
 *) echo "Invalid option. Please try again.";;
 esac
