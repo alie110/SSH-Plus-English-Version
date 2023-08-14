@@ -181,7 +181,7 @@ clear
 TODAY_INFO=$(vnstat)
 arrTODAY=($TODAY_INFO)
 # Format the output for today's traffic
-TODAY_OUTPUT="{\"daily_usage\":{\"rx\": ${arrTODAY[72]}, \"tx\": ${arrTODAY[75]}, \"total\": ${arrTODAY[78]} }}"
+TODAY_OUTPUT="{\"daily_usage\":{\"rx\": ${arrTODAY[72]},${arrTODAY[73]}, \"tx\": ${arrTODAY[75]},${arrTODAY[76]}, \"total\": ${arrTODAY[78]}${arrTODAY[79]} }}"
 #####################
 echo -e "\033[1;42m                                                   \033[m"
 echo -e "\033[47m \E[30m                        ☫                         \033[0m"
@@ -191,7 +191,7 @@ echo -e "\033[1;32mSYSTEM             MEMORY RAM       PROCESSOR "
 echo -e "\033[1;31mOS: \033[1;37m$_system \033[1;31mTotal:\033[1;37m$_ram \033[1;31mCPU: \033[1;37m$_core\033[0m"
 echo -e "\033[1;31mTime: \033[1;37m$_hora     \033[1;31mIn Use: \033[1;37m$_usor \033[1;31mIn Use: \033[1;37m$_usop\033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[1;32mDownload:\033[1;37m ${arrTODAY[72]} GB \033[1;31mUpload: \033[1;37m${arrTODAY[75]} GB \033[1;33mTotal: \033[1;37m${arrTODAY[78]} GB\033[0m"
+echo -e "\033[1;32mDownL:\033[1;37m ${arrTODAY[72]} ${arrTODAY[73]} \033[1;31mUpL: \033[1;37m${arrTODAY[75]} ${arrTODAY[76]} \033[1;33mTotal: \033[1;37m${arrTODAY[78]} ${arrTODAY[79]}\033[0m"
 [[ ! -e /tmp/att ]]  && {
     echo -e "\033[1;32mOnlines:\033[1;37m $_onlin     \033[1;31mExpired: \033[1;37m$_userexp    \033[1;33mTotal: \033[1;37m$_tuser\033[0m"
     var01='\033[1;37m•'
@@ -304,7 +304,7 @@ clear
 TODAY_INFO=$(vnstat)
 arrTODAY=($TODAY_INFO)
 # Format the output for today's traffic
-TODAY_OUTPUT="{\"daily_usage\":{\"rx\": ${arrTODAY[72]}, \"tx\": ${arrTODAY[75]}, \"total\": ${arrTODAY[78]} }}"
+TODAY_OUTPUT="{\"daily_usage\":{\"rx\": ${arrTODAY[72]},${arrTODAY[73]}, \"tx\": ${arrTODAY[75]},${arrTODAY[76]}, \"total\": ${arrTODAY[78]}${arrTODAY[79]} }}"
 #####################
 echo -e "\033[1;42m                                                   \033[m"
 echo -e "\033[47m \E[30m                        ☫                         \033[0m"
@@ -314,7 +314,7 @@ echo -e "\033[1;32mSYSTEM             MEMORY RAM       PROCESSOR "
 echo -e "\033[1;31mOS: \033[1;37m$_system \033[1;31mTotal:\033[1;37m$_ram \033[1;31mCPU: \033[1;37m$_core\033[0m"
 echo -e "\033[1;31mTime: \033[1;37m$_hora     \033[1;31mIn Use: \033[1;37m$_usor \033[1;31mIn Use: \033[1;37m$_usop\033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[1;32mDownload:\033[1;37m ${arrTODAY[72]} GB \033[1;31mUpload: \033[1;37m${arrTODAY[75]} GB \033[1;33mTotal: \033[1;37m${arrTODAY[78]} GB\033[0m"
+echo -e "\033[1;32mDownL:\033[1;37m ${arrTODAY[72]} ${arrTODAY[73]} \033[1;31mUpL: \033[1;37m${arrTODAY[75]} ${arrTODAY[76]} \033[1;33mTotal: \033[1;37m${arrTODAY[78]} ${arrTODAY[79]}\033[0m"
 echo -e "\033[1;32mOnlines:\033[1;37m $_onlin     \033[1;31mExpired: \033[1;37m$_userexp    \033[1;33mTotal: \033[1;37m$_tuser\033[0m"
 echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
