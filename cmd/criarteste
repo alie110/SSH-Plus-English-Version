@@ -1,6 +1,3 @@
-#!/bin/bash
-
-# Function to display loading animation
 function show_loading() {
     local pid=$!
     local delay=0.2
@@ -15,14 +12,7 @@ function show_loading() {
 }
 
 # Ensure necessary directories and files exist with proper permissions
-ensure_directory() {
-    local dir=$1
-    if [ ! -d "$dir" ]; then
-        mkdir -p "$dir"
-    fi
-    chmod -R u+rw "$dir"
-    show_loading
-}
+
 
 ensure_file() {
     local file=$1
@@ -34,15 +24,16 @@ ensure_file() {
 }
 
 # Ensure necessary directories and files exist with read and write permissions
-ensure_directory "/root/AETEAM"
-ensure_file "/root/AETEAM/Lock-User.txt"
-ensure_file "/root/AETEAM/Traffic.txt"
-ensure_file "/root/AETEAM/AETeam.txt"
+
+ensure_file "/root/Lock-User.txt"
+ensure_file "/root/Traffic.txt"
+ensure_file "/root/AETeam.txt"
 
 # Check if the file Trafic-server.sh exists
-if [ ! -f "/root/AETEAM/Trafic-server.sh" ]; then
+if [ ! -f "/root/Trafic-server.sh" ]; then
     # Create the Trafic-server.sh file
-    cat > /root/AETEAM/Trafic-server.sh << EOF
+# Create the Trafic-server.sh file
+cat > /root/Trafic-server.sh << EOF
 #!/bin/bash
 
 # Run vnstat and capture its output
@@ -61,7 +52,7 @@ output+="DOWNLOAD: \$rx\\nUPLOAD: \$tx\\nTOTAL: \$total\\nDATE: \$date\\n"
 output+="===================="
 
 # Define the file path
-file_path="/root/AETEAM/Traffic.txt"
+file_path="/root/Traffic.txt"
 
 # Append the output to the file
 echo -e "\$output" >> "\$file_path"
@@ -70,14 +61,12 @@ echo "Traffic information appended to \$file_path"
 EOF
 
     # Make Trafic-server.sh executable
-    chmod +x /root/AETEAM/Trafic-server.sh
+    chmod +x /root/Trafic-server.sh
 
     # Display loading animation while creating the Trafic-server.sh file
     show_loading
 fi
-
 echo "Files and code checked and created successfully."
-
 ###########################################################  Lock/Unlock USERS  ############################################################
 function lock_user() {
     read -p "Enter username: " username
@@ -85,7 +74,7 @@ function lock_user() {
     if [[ $check_user_exist == $username ]]; then
         chage -E 0 $username
         echo "$username locked successfully!"
-        echo "$username" >> /root/AETEAM/Lock-User.txt
+        echo "$username" >> /root/Lock-User.txt
     else
         echo "$username not found. Please try again."
     fi
@@ -97,16 +86,16 @@ function unlock_user() {
     if [[ $check_user_exist == $username ]]; then
         chage -E -1 $username
         echo "$username unlocked successfully!"
-        sed -i "/$username/d" /root/AETEAM/Lock-User.txt
+        sed -i "/$username/d" /root/Lock-User.txt
     else
         echo "$username not found. Please try again."
     fi
 }
 
 function show_locked_users() {
-    if [ -f "/root/AETEAM/Lock-User.txt" ]; then
+    if [ -f "/root/Lock-User.txt" ]; then
         echo "Locked users:"
-        cat /root/AETEAM/Lock-User.txt
+        cat /root/Lock-User.txt
     else
         echo "No locked users found."
     fi
@@ -114,33 +103,33 @@ function show_locked_users() {
 ###########################################################     TRAFFIC-SERVER     ############################################################
 function install_traffic_script() {
     # Check if the script is already installed
-    if grep -q "Traffic-Installed" "/root/AETEAM/AETeam.txt"; then
+    if grep -q "Traffic-Installed" "/root/AETeam.txt"; then
         echo -e "\033[0;31mTraffic script is already installed!\033[0m"
         return
     fi
 
     # Check if the cron job is already set up
-    if crontab -l | grep -q "/root/AETEAM/Trafic-server.sh"; then
+    if crontab -l | grep -q "/root/Trafic-server.sh"; then
         echo -e "\033[0;31mCron job is already set up!\033[0m"
     else
         # Run the script once
-        /root/AETEAM/Trafic-server.sh
+        /root/Trafic-server.sh
 
         # Add cron job for daily execution
-        (crontab -l ; echo "59 23 * * * /root/AETEAM/Trafic-server.sh") | crontab -
-        
+        (crontab -l ; echo "59 23 * * * /root/Trafic-server.sh") | crontab -
+
         echo -e "Cron job set up."
     fi
     
     # Edit AETeam.txt to indicate script installation
-    sed -i '2i Traffic-Installed' /root/AETEAM/AETeam.txt
+    echo "Traffic-Installed" > /root/AETeam.txt
     
     echo -e "Traffic script installed and AETeam.txt updated."
 }
 
 function show_traffic_info() {
-    if [ -f "/root/AETEAM/Traffic.txt" ]; then
-        file_contents=$(cat /root/AETEAM/Traffic.txt)
+    if [ -f "/root/Traffic.txt" ]; then
+        file_contents=$(cat /root/Traffic.txt)
         if [ -z "$file_contents" ]; then
             echo "The script is not installed. Install the script first."
         else
@@ -150,48 +139,27 @@ function show_traffic_info() {
     else
         echo "The script is not installed. Install the script first."
     fi
-}
-
-function create_report() {
-    if [ -f "/root/AETEAM/Traffic.txt" ]; then
-        file_contents=$(cat /root/AETEAM/Traffic.txt)
-        if [ -z "$file_contents" ]; then
-            echo "The script is not installed. Install the script first."
-        else
-            zip_file_path="/root/AETEAM/TrafficReport.zip"
-            zip "$zip_file_path" "/root/AETEAM/Traffic.txt"
-            echo "Report created: $zip_file_path"
-            server_ip="YOUR_SERVER_IP"  # Replace with your server's IP
-            download_link="http://$server_ip:81/TrafficReport.zip"
-            echo "Download link: $download_link"
-            mv "$zip_file_path" "/root/AETEAM/TrafficReport.zip"  # Replace existing ZIP file
-        fi
-    else
-        echo "The script is not installed. Install the script first."
-    fi
-}
+ }
 
 function remove_traffic_script() {
     # Check if the script is installed
-    if ! grep -q "Trafic-Installed" "/root/AETEAM/AETeam.txt"; then
-        echo -e "\033[0;31mTraffic script is not installed!\033[0m"
-        return
-    fi
+    if grep -q "Traffic-Installed" "/root/AETeam.txt"; then
+        # Remove cron job
+        crontab -l | grep -v "/root/Trafic-server.sh" | crontab -
 
-    # Remove cron job
-    crontab -l | grep -v "/root/AETEAM/Trafic-server.sh" | crontab -
-    
-    # Remove first line of AETeam.txt
-    sed -i '/Traffic-Installed/d' /root/AETEAM/AETeam.txt
-    
-    # Remove content of Traffic.txt
-    echo -n > /root/AETEAM/Traffic.txt
-    
-    echo -e "Traffic script and related settings have been removed."
+        # Remove first line of AETeam.txt
+        sed -i '/Traffic-Installed/d' /root/AETeam.txt
+
+        # Remove content of Traffic.txt
+        echo -n > /root/Traffic.txt
+
+        echo -e "Traffic script and related settings have been removed."
+    else
+        echo -e "\033[0;31mTraffic script is not installed!\033[0m"
+    fi
 }
-###########################################################          MENU          ############################################################
-# Main menu
-main_menu() {
+  ###########################################################          MENU          ############################################################
+
     clear
     echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
     echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
@@ -204,16 +172,15 @@ main_menu() {
     echo -e "\033[1;32m [1] \033[1;31m• \033[1;33mLock User\033[0m"
     echo -e "\033[1;32m [2] \033[1;31m• \033[1;33mUnlock User\033[0m"
     echo -e "\033[1;32m [3] \033[1;31m• \033[1;33mShow locked users\033[0m"
-#################################################   TRAFFIC  SERVER   ##################################################
+    #################################################   TRAFFIC  SERVER   ##################################################
     echo -e "\033[0;31m===========   «\033[1;31mTRAFFIC  SERVER\033[0;31m»   ============\033[0m"
-    if grep -q "Trafic-Installed" "/root/AETEAM/AETeam.txt"; then
-    echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script (\033[0;31m\$traffic_script_status\033[0;33m)\033[0m"
+    if grep -q "Traffic-Installed" "/root/AETeam.txt"; then
+    echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script (\033[0;31mInstalled\033[0;33m)\033[0m"
     else
     echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script\033[0m"
     fi
     echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mShow Traffic Information\033[0m"
-    echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mCreate Report (ZIP)\033[0m"
-    echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mRemove Traffic Script\033[0m"
+    echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mRemove Traffic Script\033[0m"
 #################################################   SPEED UP SERVER   ##################################################
     echo -e "\033[0;31m===========   «\033[1;31mSPEED UP SERVER\033[0;31m»   ============\033[0m"
     echo -e "\033[1;32m [X] \033[1;31m• \033[1;33mXXXXXXXXXX\033[0m"
@@ -222,19 +189,14 @@ main_menu() {
     echo ""
     echo ""
     read -p "Enter option number: " option
-}
+
     case $option in
     1) lock_user ;;
     2) unlock_user ;;
     3) show_locked_users ;;
     4) install_traffic_script ;;
     5) show_traffic_info ;;
-    6) create_report ;;
-    7) remove_traffic_script ;;
-    8) exit ;;
+    6) remove_traffic_script ;;
+    7) exit ;;
     *) echo "Invalid option. Please try again." ;;
-    esac
-
-
-# Call the main menu function
-main_menu
+    esac 
