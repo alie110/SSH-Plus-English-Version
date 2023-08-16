@@ -1,33 +1,91 @@
 #!/bin/bash
 
-# Check if the directory exists, create it if not
-AETEAM_DIR="/root/AETEAM"
-if [ ! -d "$AETEAM_DIR" ]; then
-    echo "Creating AETEAM directory..."
-    mkdir -p "$AETEAM_DIR"
-    echo "Directory created."
+# Function to display loading animation
+function show_loading() {
+    local pid=$!
+    local delay=0.2
+    local spinchars="/-\|"
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        for char in ${spinchars}; do
+            echo -ne "\r$char Please wait..."
+            sleep $delay
+        done
+    done
+    echo -ne "\rDone!          "
+}
 
-    # Create Lock-User.txt and Traffic.txt files
-    touch "$AETEAM_DIR/Lock-User.txt"
-    touch "$AETEAM_DIR/Traffic.txt"
-    echo "Lock-User.txt and Traffic.txt created."
+# Ensure necessary directories and files exist with proper permissions
+ensure_directory() {
+    local dir=$1
+    if [ ! -d "$dir" ]; then
+        mkdir -p "$dir"
+    fi
+    chmod -R u+rw "$dir"
+    show_loading
+}
+
+ensure_file() {
+    local file=$1
+    if [ ! -f "$file" ]; then
+        touch "$file"
+    fi
+    chmod u+rw "$file"
+    show_loading
+}
+
+# Ensure necessary directories and files exist with read and write permissions
+ensure_directory "/root/AETEAM"
+ensure_file "/root/AETEAM/Lock-User.txt"
+ensure_file "/root/AETEAM/Traffic.txt"
+ensure_file "/root/AETEAM/AETeam.txt"
+
+# Check if the file Trafic-server.sh exists
+if [ ! -f "/root/AETEAM/Trafic-server.sh" ]; then
+    # Create the Trafic-server.sh file
+    cat > /root/AETEAM/Trafic-server.sh << EOF
+#!/bin/bash
+
+# Run vnstat and capture its output
+TODAY_INFO=\$(vnstat)
+arrTODAY=(\$TODAY_INFO)
+
+# Extract relevant information
+rx="\${arrTODAY[72]} \${arrTODAY[73]}"
+tx="\${arrTODAY[75]} \${arrTODAY[76]}"
+total="\${arrTODAY[78]} \${arrTODAY[79]}"
+date=\$(date +"%d/%m/%Y %H:%M:%S")
+
+# Create the output string
+output="====================\\n"
+output+="DOWNLOAD: \$rx\\nUPLOAD: \$tx\\nTOTAL: \$total\\nDATE: \$date\\n"
+output+="===================="
+
+# Define the file path
+file_path="/root/AETEAM/Traffic.txt"
+
+# Append the output to the file
+echo -e "\$output" >> "\$file_path"
+
+echo "Traffic information appended to \$file_path"
+EOF
+
+    # Make Trafic-server.sh executable
+    chmod +x /root/AETEAM/Trafic-server.sh
+
+    # Display loading animation while creating the Trafic-server.sh file
+    show_loading
 fi
-if ! command -v iftop &> /dev/null; then
-    echo "Installing iftop..."
-    apt-get update
-    apt-get install iftop -y
-fi
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo ""
+
+echo "Files and code checked and created successfully."
+
+###########################################################  Lock/Unlock USERS  ############################################################
 function lock_user() {
     read -p "Enter username: " username
     check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
     if [[ $check_user_exist == $username ]]; then
         chage -E 0 $username
         echo "$username locked successfully!"
-        echo "$username" >> "$AETEAM_DIR/Lock-User.txt"
+        echo "$username" >> /root/AETEAM/Lock-User.txt
     else
         echo "$username not found. Please try again."
     fi
@@ -45,138 +103,138 @@ function unlock_user() {
     fi
 }
 
-function unlock_user() {
-    read -p "Enter username: " username
-    check_user_exist=$(grep -w $username /etc/passwd | cut -d: -f1)
-    if [[ $check_user_exist == $username ]]; then
-        chage -E -1 $username
-        echo "$username unlocked successfully!"
-        sed -i "/$username/d" "$AETEAM_DIR/Lock-User.txt"
-    else
-        echo "$username not found. Please try again."
-    fi
-}
 function show_locked_users() {
-    if [ -f "$AETEAM_DIR/Lock-User.txt" ]; then
+    if [ -f "/root/AETEAM/Lock-User.txt" ]; then
         echo "Locked users:"
-        cat "$AETEAM_DIR/Lock-User.txt"
+        cat /root/AETEAM/Lock-User.txt
     else
         echo "No locked users found."
     fi
 }
-#################################################################################################
+###########################################################     TRAFFIC-SERVER     ############################################################
 function install_traffic_script() {
-    if ! command -v nload &> /dev/null; then
-        echo "Installing nload..."
-        apt-get update
-        apt-get install nload -y
+    # Check if the script is already installed
+    if grep -q "Traffic-Installed" "/root/AETEAM/AETeam.txt"; then
+        echo -e "\033[0;31mTraffic script is already installed!\033[0m"
+        return
     fi
 
-    # Check if Traffic-server.sh already exists
-    TRAFFIC_SCRIPT="/root/AETEAM/Trafic-server.sh"
-    if [ ! -f "$TRAFFIC_SCRIPT" ]; then
-        # Create and configure the traffic script
-        echo "#!/bin/bash
-INTERFACE=eth0
-TODAY=\$(date +'%d/%m/%Y')
-TRAFFIC_FILE=/root/AETEAM/Traffic.txt
-
-# Get total received and transmitted bytes from ifconfig
-RECEIVED=\$(ifconfig \$INTERFACE | grep 'RX bytes' | awk '{print \$2}' | cut -d ':' -f 2)
-TRANSMITTED=\$(ifconfig \$INTERFACE | grep 'TX bytes' | awk '{print \$6}' | cut -d ':' -f 2)
-
-# Convert bytes to gigabytes
-RECEIVED_GB=\$(echo \"\$RECEIVED / (1024 * 1024 * 1024)\" | bc)
-TRANSMITTED_GB=\$(echo \"\$TRANSMITTED / (1024 * 1024 * 1024)\" | bc)
-TOTAL_GB=\$(echo \"\$RECEIVED_GB + \$TRANSMITTED_GB\" | bc)
-
-# Append traffic data to the Traffic.txt file
-echo \"====================\" >> \$TRAFFIC_FILE
-echo \"DOWNLOAD: \$RECEIVED_GB GB\" >> \$TRAFFIC_FILE
-echo \"UPLOAD: \$TRANSMITTED_GB GB\" >> \$TRAFFIC_FILE
-echo \"TOTAL: \$TOTAL_GB GB\" >> \$TRAFFIC_FILE
-echo \"DATE: \$TODAY\" >> \$TRAFFIC_FILE
-echo \"====================\" >> \$TRAFFIC_FILE
-" > "$TRAFFIC_SCRIPT"
-        chmod +x "$TRAFFIC_SCRIPT"
-
-        # Add script execution to crontab
-        (crontab -l ; echo "0 0 * * * bash $TRAFFIC_SCRIPT") | crontab -
-        echo "Traffic script installed and configured."
+    # Check if the cron job is already set up
+    if crontab -l | grep -q "/root/AETEAM/Trafic-server.sh"; then
+        echo -e "\033[0;31mCron job is already set up!\033[0m"
     else
-        echo "Traffic script already exists. No changes made."
+        # Run the script once
+        /root/AETEAM/Trafic-server.sh
+
+        # Add cron job for daily execution
+        (crontab -l ; echo "59 23 * * * /root/AETEAM/Trafic-server.sh") | crontab -
+        
+        echo -e "Cron job set up."
+    fi
+    
+    # Edit AETeam.txt to indicate script installation
+    sed -i '2i Traffic-Installed' /root/AETEAM/AETeam.txt
+    
+    echo -e "Traffic script installed and AETeam.txt updated."
+}
+
+function show_traffic_info() {
+    if [ -f "/root/AETEAM/Traffic.txt" ]; then
+        file_contents=$(cat /root/AETEAM/Traffic.txt)
+        if [ -z "$file_contents" ]; then
+            echo "The script is not installed. Install the script first."
+        else
+            echo "Traffic Information:"
+            echo "$file_contents"
+        fi
+    else
+        echo "The script is not installed. Install the script first."
     fi
 }
 
-function show_traffic_for_date() {
-    read -p "Enter date (DD/MM/YYYY): " selected_date
-    if grep -q "DATE: $selected_date" /root/AETEAM/Traffic.txt; then
-        echo "Traffic for $selected_date:"
-        grep -A 4 "DATE: $selected_date" /root/AETEAM/Traffic.txt
+function create_report() {
+    if [ -f "/root/AETEAM/Traffic.txt" ]; then
+        file_contents=$(cat /root/AETEAM/Traffic.txt)
+        if [ -z "$file_contents" ]; then
+            echo "The script is not installed. Install the script first."
+        else
+            zip_file_path="/root/AETEAM/TrafficReport.zip"
+            zip "$zip_file_path" "/root/AETEAM/Traffic.txt"
+            echo "Report created: $zip_file_path"
+            server_ip="YOUR_SERVER_IP"  # Replace with your server's IP
+            download_link="http://$server_ip:81/TrafficReport.zip"
+            echo "Download link: $download_link"
+            mv "$zip_file_path" "/root/AETEAM/TrafficReport.zip"  # Replace existing ZIP file
+        fi
     else
-        echo "No traffic data found for $selected_date."
+        echo "The script is not installed. Install the script first."
     fi
 }
 
-# Call the install_traffic_script function to set up the script
-install_traffic_script
-function show_full_traffic_data() {
-    if [ -f "$AETEAM_DIR/Traffic.txt" ]; then
-        echo "Full Traffic Data:"
-        cat "$AETEAM_DIR/Traffic.txt"
-    else
-        echo "No traffic data found."
+function remove_traffic_script() {
+    # Check if the script is installed
+    if ! grep -q "Trafic-Installed" "/root/AETEAM/AETeam.txt"; then
+        echo -e "\033[0;31mTraffic script is not installed!\033[0m"
+        return
     fi
+
+    # Remove cron job
+    crontab -l | grep -v "/root/AETEAM/Trafic-server.sh" | crontab -
+    
+    # Remove first line of AETeam.txt
+    sed -i '/Traffic-Installed/d' /root/AETEAM/AETeam.txt
+    
+    # Remove content of Traffic.txt
+    echo -n > /root/AETEAM/Traffic.txt
+    
+    echo -e "Traffic script and related settings have been removed."
 }
-#################نمایش ترافیک لحظه ای
-RECEIVED=$(iftop -t -s 1 -n -N | awk '/Total send rate/ {print $4}')
-TRANSMITTED=$(iftop -t -s 1 -n -N | awk '/Total receive rate/ {print $4}')
-# Calculate total traffic
-TOTAL_GB=$(echo "$RECEIVED + $TRANSMITTED" | bc)
+###########################################################          MENU          ############################################################
+# Main menu
+main_menu() {
+    clear
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[41m \033[37m        ⇱ SSH PLUS MANAGER - IRAN AETEAM ⇲        \033[0m"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo ""
+    echo -e "\033[1;33m           AETeam Options           \033[0m"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+#################################################  LOCK/UNLOCK USERS  ##################################################
+    echo -e "\033[0;31m===========   «\033[1;31mLock/Unlock USERS\033[0;31m»   ============\033[0m"
+    echo -e "\033[1;32m [1] \033[1;31m• \033[1;33mLock User\033[0m"
+    echo -e "\033[1;32m [2] \033[1;31m• \033[1;33mUnlock User\033[0m"
+    echo -e "\033[1;32m [3] \033[1;31m• \033[1;33mShow locked users\033[0m"
+#################################################   TRAFFIC  SERVER   ##################################################
+    echo -e "\033[0;31m===========   «\033[1;31mTRAFFIC  SERVER\033[0;31m»   ============\033[0m"
+    if grep -q "Trafic-Installed" "/root/AETEAM/AETeam.txt"; then
+    echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script (\033[0;31m\$traffic_script_status\033[0;33m)\033[0m"
+    else
+    echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script\033[0m"
+    fi
+    echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mShow Traffic Information\033[0m"
+    echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mCreate Report (ZIP)\033[0m"
+    echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mRemove Traffic Script\033[0m"
+#################################################   SPEED UP SERVER   ##################################################
+    echo -e "\033[0;31m===========   «\033[1;31mSPEED UP SERVER\033[0;31m»   ============\033[0m"
+    echo -e "\033[1;32m [X] \033[1;31m• \033[1;33mXXXXXXXXXX\033[0m"
+    echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mExit\033[0m"
+    echo ""
+    echo ""
+    read -p "Enter option number: " option
+}
+    case $option in
+    1) lock_user ;;
+    2) unlock_user ;;
+    3) show_locked_users ;;
+    4) install_traffic_script ;;
+    5) show_traffic_info ;;
+    6) create_report ;;
+    7) remove_traffic_script ;;
+    8) exit ;;
+    *) echo "Invalid option. Please try again." ;;
+    esac
 
 
-# ... کدهای قبلی ...
-
-# Check if the Traffic script is installed
-if [ -f "$AETEAM_DIR/Trafic-server.sh" ]; then
-    traffic_script_status="(INSTALLED)"
-else
-    traffic_script_status=""
-fi
-
-
-
-
-echo -e "\033[1;33m           AETeam Options           \033[0m"
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[0;31m===========  «\033[1;31mLOCK/UNLOCK USERS\033[0;31m»  ============\033[0m"
-echo -e "\033[1;32m [1] \033[1;31m• \033[1;33mLock User\033[0m"
-echo -e "\033[1;32m [2] \033[1;31m• \033[1;33mUnlock User\033[0m"
-echo -e "\033[1;32m [3] \033[1;31m• \033[1;33mShow Locked Users\033[0m"
-echo -e "\033[0;31m===========   «\033[1;31mTRAFFIC  SERVER\033[0;31m»   ============\033[0m"
-echo -e "\033[0;31m==================================================================\033[0m"
-echo -e "\033[0;31mDOWNLOAD: $RECEIVED GB \033[0m"
-echo -e "\033[0;31mUPLOAD: $TRANSMITTED GB \033[0m"
-echo -e "\033[0;31mTOTAL: $TOTAL_GB GB \033[0m"
-echo -e "\033[0;31m==================================================================\033[0m"
-echo -e "\033[1;32m [4] \033[1;31m• \033[1;33mInstall Traffic Script $traffic_script_status\033[0m"
-echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mShow Traffic for Date\033[0m"
-echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mShow Full Traffic\033[0m"
-echo -e "\033[0;31m===========   «\033[1;31mSPEED UP SERVER\033[0;31m»   ============\033[0m"
-echo -e "\033[1;32m [X] \033[1;31m• \033[1;33mXXXXXXXXXX\033[0m"
-echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mExit\033[0m"
-echo ""
-echo ""
-read -p "Enter option number: " option
-
-case $option in
-1) lock_user;;
-2) unlock_user;;
-3) show_locked_users;;
-4) install_traffic_script;;
-5) show_traffic_for_date;;
-6) show_full_traffic_data;;  # This is the new option
-7) exit;;
-*) echo "Invalid option. Please try again.";;
-esac
+# Call the main menu function
+main_menu
