@@ -22,9 +22,9 @@ ShellBot.username
 fun_menu() {
     [[ "${message_from_id[$id]}" == "$id_admin" ]] && {
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>SELECT AN OPTION BELOW !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard1" \
@@ -38,9 +38,9 @@ fun_menu() {
     }
     if [[ "$(grep -w "${message_from_username}" $ativos | grep -wc 'revenda')" != '0' ]]; then
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>SELECT AN OPTION BELOW !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard2" \
@@ -48,9 +48,9 @@ fun_menu() {
         return 0
     elif [[ "$(grep -w "${message_from_username}" $ativos | grep -wc 'subrevenda')" != '0' ]]; then
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>SELECT AN OPTION BELOW !</i>\n\n"
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$env_msg" \
             --reply_markup "$keyboard3" \
@@ -58,7 +58,7 @@ fun_menu() {
         return 0
     else
         ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
-            --text "$(echo -e 🚫 ACESSO NEGADO 🚫)"
+            --text "$(echo -e 🚫 ACCESS DENIED 🚫)"
         return 0
     fi
 }
@@ -73,9 +73,9 @@ fun_ajuda() {
     }
     if [[ "$id_chatuser" = "$id_admin" ]]; then
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>Available Commands</i>\n\n"
         env_msg+="[<b>01</b>] /menu = Exibe menu\n"
         env_msg+="[<b>02</b>] /info = Display information\n"
@@ -109,9 +109,9 @@ fun_ajuda() {
         return 0
     elif [[ "$(grep -w "$id_name" $ativos | awk '{print $NF}')" == 'revenda' ]]; then
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>Available Commands</i>\n\n"
         env_msg+="[<b>01</b>] /menu = Exibe menu\n"
         env_msg+="[<b>02</b>] /info = Display information\n"
@@ -135,9 +135,9 @@ fun_ajuda() {
         return 0
     elif [[ "$(grep -w "$id_name" $ativos | awk '{print $NF}')" == 'subrevenda' ]]; then
         local env_msg
-        env_msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-        env_msg+="<b>WELCOME TO THE SSHPLUS BOT</b>\n"
-        env_msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         env_msg+="⚠️ <i>Available Commands</i>\n\n"
         env_msg+="[<b>01</b>] /menu = Display menu\n"
         env_msg+="[<b>02</b>] /info = Display information\n"
@@ -442,9 +442,9 @@ ver_users() {
     if [[ "${callback_query_from_id[$id]}" == "$id_admin" ]]; then
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
-        info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_users+='<b>USER INFORMATION</b>\n'
-        info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         info_users+='⚠️ Displays in the format below:\n\n'
         info_users+='<code>USER PASSWORD LIMIT DATE</code>\n'
         ShellBot.sendMessage --chat_id $id_admin \
@@ -494,9 +494,9 @@ ver_users() {
         }
         arq_info=/tmp/$(echo $RANDOM)
         local info_users
-        info_users='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_users+='<b>USER INFORMATION</b>\n'
-        info_users+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         info_users+='⚠️ Displays in the format below:\n\n'
         info_users+='<code>USER PASSWORD LIMIT DATE</code>\n'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
@@ -575,9 +575,9 @@ monitor_ssh() {
         database="/root/usuarios.db"
         cad_onli=/tmp/$(echo $RANDOM)
         local info_on
-        info_on='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_on+='<b>ONLINE USER MONITOR</b>\n'
-        info_on+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         info_on+='⚠️ Displays in the format below:\n\n'
         info_on+='<code>ONLINE USER/TIME LIMIT\n</code>'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
@@ -632,9 +632,9 @@ monitor_ssh() {
         database="/root/usuarios.db"
         cad_onli=/tmp/$(echo $RANDOM)
         local info_on
-        info_on='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n'
-        info_on+='<b>ONLINE USER MONITOR</b>\n'
-        info_on+='=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n'
+        env_msg="===================================\n"
+        env_msg+="<b>WELCOME TO THE AETeam BOT</b>\n"
+        env_msg+="==================================\n\n"
         info_on+='⚠️ Displays in the format below:\n\n'
         info_on+='<code>ONLINE USER/TIME LIMIT\n</code>'
         ShellBot.sendMessage --chat_id ${callback_query_message_chat_id[$id]} \
@@ -856,9 +856,9 @@ speed_test() {
     upl=$(cat speed | sed -n '9 p' | awk -F : {'print $NF'})
     lnk=$(cat speed | sed -n '10 p' | awk {'print $NF'})
     local msg
-    msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
+    msg="==================================\n"
     msg+="<b>🚀 SERVER SPEED 🚀</b>\n"
-    msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+    msg="==================================\n"
     msg+="<b>PING/LATENCY:</b>$png\n"
     msg+="<b>DOWNLOAD:</b>$down\n"
     msg+="<b>UPLOAD:</b>$upl\n"
@@ -890,11 +890,11 @@ backup_users() {
 
 sobremim() {
     local msg
-    msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
-    msg+="<b>🤖 BOT SSHPLUS MANAGER 🤖</b>\n"
-    msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
-    msg+="<b>Developed by:</b> @crazy_vpn\n"
-    msg+="<b>Official channel:</b> @SSHPLUS\n\n"
+    msg="==================================\n"
+    msg+="<b>🤖 AETeam BOT SSHPLUS MANAGER 🤖</b>\n"
+    msg+="==================================\n\n"
+    msg+="<b>>>></b> AETeam\n"
+    msg+="<b>>>></b> @AETeam.pro\n\n"
     msg+="I was created with the purpose of providing information and tools for VPN management on 🐧 GNU/Linux 🐧 servers.\n\n"
     msg+="<b>Menu:</b> /menu\n"
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} \
@@ -1154,16 +1154,16 @@ relatorio_rev() {
         _cont_atv=$(grep -wc SUBREVENDA /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username})
         _cont_sup=$(fun_contsub | paste -s -d + | bc)
         local msg
-        msg="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n"
+        msg="==================================\n"
         msg+="<b>📊 REPORT | INFORMATION</b>\n"
-        msg+="=×=×=×=×=×=×=×=×=×=×=×=×=×=\n\n"
+        msg="==================================\n"
         msg+="<b>Login Limit:</b> $_cont_limite\n"
         msg+="<b>Available Limit:</b> $_cont_disp\n"
         msg+="<b>Total Sub-Resales:</b> $_cont_atv\n"
         msg+="<b>Suspended Sub-Resales:</b> $_cont_sup\n"
         msg+="<b>User:</b> @${callback_query_from_username}\n"
         msg+="<b>ID:</b> <code>${callback_query_from_id}</code>\n"
-        echo -e "REPORT OF SUB-RESELLERS\n\nTotal: $_cont_atv  -  $(printf 'Data: %(%d/%m/%Y)T\n')\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >/tmp/Relatorio-${callback_query_from_username}.txt
+        echo -e "REPORT OF SUB-RESELLERS\n\nTotal: $_cont_atv  -  $(printf 'Data: %(%d/%m/%Y)T\n')\n==================================" >/tmp/Relatorio-${callback_query_from_username}.txt
         while read _sublist; do
             _usub="$(echo $_sublist | awk '{print $2}')"
             _limit_sub=$(echo $_sublist | awk '{print $4}')
@@ -1191,7 +1191,7 @@ relatorio_rev() {
                 total_on='0'
                 total_users='0'
             }
-            echo -e "\nSTATUS: $_status\nSUB-RESELLER: @$_usub\nLIMIT: $_limit_sub\nDAYS REMAINING: $_data_sub\nSSH CREATED: $total_users\nSSH ONLINE: $total_on\n\n=×=×=×=×=×=×=×=×=×=×=×=×=×=×=×=" >>/tmp/Relatorio-${callback_query_from_username}.txt
+            echo -e "\nSTATUS: $_status\nSUB-RESELLER: @$_usub\nLIMIT: $_limit_sub\nDAYS REMAINING: $_data_sub\nSSH CREATED: $total_users\nSSH ONLINE: $total_on\n\n==================================" >>/tmp/Relatorio-${callback_query_from_username}.txt
         done <<<"$(grep -w 'SUBREVENDA' /etc/bot/revenda/${callback_query_from_username}/${callback_query_from_username})"
         ShellBot.sendDocument --chat_id ${callback_query_message_chat_id[$id]} \
             --document "@/tmp/Relatorio-${callback_query_from_username}.txt" \
