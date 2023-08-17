@@ -106,7 +106,7 @@ vrs2=$(sed -n '1 p' /tmp/att | sed -e 's/[^0-9]//ig')
 
   rm /tmp/att > /dev/null 2>&1
 
-  echo -e " \033[1;33m MORE INFORMATION \033[1;31m(\033[1;36mTELEGRAM\033[1;31m): \033[1;37m@crazy_vpn\n"
+  echo -e " \033[1;33m MORE INFORMATION \033[1;31m(\033[1;36m>>>\033[1;31m): \033[1;37mAETeam\n"
 
   echo -ne " \033[1;31m PRESS ENTER \033[1;33mTo return to \033[1;32mMENU!\033[0m"; read
 
@@ -116,7 +116,7 @@ vrs2=$(sed -n '1 p' /tmp/att | sed -e 's/[^0-9]//ig')
 
   echo -e "  \033[1;36mTHERE IS A NEW UPDATE AVAILABLE!\033[1;33m\n"
 
-  echo -e "  \033[1;33mMORE INFORMATION \033[1;31m(\033[1;36mTELEGRAM\033[1;31m): \033[1;37m@crazy_vpn\n"
+  echo -e "  \033[1;33mMORE INFORMATION \033[1;31m(\033[1;36m>>>\033[1;31m): \033[1;37mAETeam\n"
 
   echo -e "  \033[1;32mUPDATE DETAILS:\033[0m\n"
 
@@ -128,9 +128,9 @@ vrs2=$(sed -n '1 p' /tmp/att | sed -e 's/[^0-9]//ig')
 
   echo " "
 
-  echo -ne "  \033[1;32mWANT TO UPDATE \033[1;31m? \033[1;33m[s/n]:\033[1;37m "; read res
+  echo -ne "  \033[1;32mWANT TO UPDATE \033[1;31m? \033[1;33m[y/n]:\033[1;37m "; read res
 
-  if [[ "$res" = s || "$res" = S ]];then
+  if [[ "$res" = y || "$res" = Y ]];then
 
     echo -e "\n\033[1;32m  STARTING UPDATE ..."
 
