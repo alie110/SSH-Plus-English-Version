@@ -184,6 +184,49 @@ function remove_traffic_script() {
         echo -e "\033[0;31mTraffic script is not installed!\033[0m"
     fi
 }
+###########################################################     TRAFFIC-LIMITER     ############################################################
+function limit_speed() {
+    read -p "Enter username: " username
+    user_id=$(id -u $username)
+    if [[ -n $user_id ]]; then
+        read -p "Enter speed limit in MB/s: " speed
+        interface_name=$(ip -o link show | awk -F': ' '{print $2}' | grep -v "lo")
+        tc qdisc add dev $interface_name root handle 1: htb default 12
+        tc class add dev $interface_name parent 1: classid 1:1 htb rate ${speed}mbit
+        tc class add dev $interface_name parent 1:1 classid 1:12 htb rate ${speed}mbit
+        echo "$username ($user_id) limited to ${speed} MB/s successfully!"
+        echo "$user_id=$speed" >> /root/AET-ULS.txt
+    else
+        echo "$username not found. Please try again."
+    fi
+}
+
+function remove_limit() {
+    read -p "Enter username: " username
+    user_id=$(id -u $username)
+    if [[ -n $user_id ]]; then
+        interface_name=$(ip -o link show | awk -F': ' '{print $2}' | grep -v "lo")
+        tc qdisc del dev $interface_name root
+        echo "$username's speed limit removed successfully!"
+        sed -i "/^$user_id=/d" /root/AET-ULS.txt
+    else
+        echo "$username not found. Please try again."
+    fi
+}
+
+function show_limited_users() {
+    if [ -f "/root/AET-ULS.txt" ]; then
+        echo "Limited users:"
+        while read line; do
+            user_id=$(echo $line | cut -d= -f1)
+            username=$(id -un $user_id)
+            speed=$(echo $line | cut -d= -f2)
+            echo "$username ($user_id) - $speed MB/s"
+        done < /root/AET-ULS.txt
+    else
+        echo "No limited users found."
+    fi
+}
   ###########################################################          MENU          ############################################################
 
     clear
@@ -208,11 +251,14 @@ function remove_traffic_script() {
     echo -e "\033[1;32m [5] \033[1;31m• \033[1;33mShow Traffic Information\033[0m"
     echo -e "\033[1;32m [6] \033[1;31m• \033[1;33mCreate Report (ZIP)\033[0m"
     echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mRemove Traffic Script\033[0m"
-#################################################   SPEED UP SERVER   ##################################################
-    echo -e "\033[0;31m===========   «\033[1;31mSPEED UP SERVER\033[0;31m»   ============\033[0m"
+#################################################   SPEED LIMITERS   ##################################################
+    echo -e "\033[0;31m===========   «\033[1;31mSPEED LIMITERS\033[0;31m»   ============\033[0m"
+    echo -e "\033[1;32m [8] \033[1;31m• \033[1;33mLimit User's Speed\033[0m"
+    echo -e "\033[1;32m [9] \033[1;31m• \033[1;33mRemove User's Speed Limit\033[0m"
+    echo -e "\033[1;32m [10] \033[1;31m• \033[1;33mShow Limited Users\033[0m"
     echo -e "\033[1;32m [X] \033[1;31m• \033[1;33mXXXXXXXXXX\033[0m"
     echo -e "\033[0;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
-    echo -e "\033[1;32m [7] \033[1;31m• \033[1;33mExit\033[0m"
+    echo -e "\033[1;32m [11] \033[1;31m• \033[1;33mExit\033[0m"
     echo ""
     echo ""
     echo -ne "\033[1;32mWHAT DO YOU WANT TO DO\033[1;31m ?\033[1;37m : "; read  option
@@ -225,6 +271,9 @@ function remove_traffic_script() {
     5) show_traffic_info ;;
     6) create_report ;;
     7) remove_traffic_script ;;
-    8) exit ;;
+    8) limit_speed;;
+    9) remove_limit;;
+    10) show_limited_users;;
+    11) exit ;;
     *) echo "Invalid option. Please try again." ;;
     esac 
